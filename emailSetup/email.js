@@ -9,7 +9,7 @@ module.exports.transporter = nodemailer.createTransport({
 });
 
 module.exports.mailOptions = {
-  from: 'rohan.gaikwad19@vit.edu',
+  from: '',
   to: '',
   subject: '',
   text: ''
