@@ -1,6 +1,15 @@
 var adminModel = require('../models/admin')
-var RobosparkUserModel = require('../models/robosparkUser');
 var emailSetup = require('../emailSetup/email');
+
+var progModel = require('../models/prog');
+var mecModel = require('../models/mec');
+var elexModel = require('../models/elex');
+
+var Model_Value = new Map;
+Model_Value.set( 1 ,progModel );
+Model_Value.set( 2 ,mecModel );
+Model_Value.set( 3 ,elexModel);
+
  
 module.exports.registerAdmin = async (req,res)=>{
         var user = await adminModel.findOne({"USERNAME" : req.body.username })
@@ -21,10 +30,17 @@ module.exports.loginAdmin = async (req , res)=>{
 }
 
 module.exports.AddNewRobosparkUser = async (req,res)=>{
-    var newRoboSparkUsername = req.body.username; 
-    const user = await RobosparkUserModel.findOne({"USERNAME" : newRoboSparkUsername});
+    var userName_Std_Format = "TRF-";
+    var domain = req.body.domain;
+    var newRoboSparkUsername = userName_Std_Format + domain + "-" + req.body.username; 
+    if( domain<=0 ||  domain>=4 ){
+        return res.send({"Error" : "Invalid Credentials"})
+    }
+    var userModel = Model_Value.get(req.body.domain);
+    const user = await userModel.findOne( { $or: [ { "USERNAME" : req.body.username }, { "EMAIL" : req.body.email } ] } );
+    
     if(!user){
-        var temp = await RobosparkUserModel.create({"USERNAME" : newRoboSparkUsername , "PASSWORD" : "trf@1234"});
+        var temp = await userModel.create({"USERNAME" : newRoboSparkUsername , "EMAIL" : req.body.email  , "PASSWORD" : "trf@1234"});
 
         // emailSetup.mailOptions.to = newRoboSparkUsername;
         // emailSetup.mailOptions.subject = "Login Credentials for Inventro";

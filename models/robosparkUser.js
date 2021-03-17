@@ -8,6 +8,9 @@ var RobosparkMemberSchema = new mongoose.Schema({
     USERNAME :  {
         type: String,
     },
+    EMAIL :{
+        type : String,
+    },
     PASSWORD : {
         type: String,
     },
@@ -29,10 +32,7 @@ RobosparkMemberSchema.statics.login = async function(username, password) {
       }
       return {"Error" : "Incorrect Password"};
     }
-    return {"Error" : "Incorrect Email"};
+    return {"Error" : "Incorrect Username"};
 };
 
-
-var RobosparkMemberModel = mongoose.model('ROBOSPARK_USERS_DATA' , RobosparkMemberSchema)
-module.exports = RobosparkMemberModel;
-
+module.exports = RobosparkMemberSchema;

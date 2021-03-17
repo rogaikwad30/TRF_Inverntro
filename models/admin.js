@@ -1,7 +1,7 @@
 var mongoose  = require("mongoose")
 var bcryptjs = require('bcryptjs')
 mongoose.connect("mongodb+srv://abcd:abcd@cluster0.mejos.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",{useNewUrlParser:true , useCreateIndex:true, useUnifiedTopology: true})
-var connection = mongoose.connection;
+
 
 
 var AdminSchema = new mongoose.Schema({
