@@ -1,5 +1,6 @@
 var adminModel = require('../models/admin')
 var emailSetup = require('../emailSetup/email');
+var inventryComponents =  require('../models/components');
 
 var progModel = require('../models/prog');
 var mecModel = require('../models/mec');
@@ -59,4 +60,37 @@ module.exports.AddNewRobosparkUser = async (req,res)=>{
     else{
         res.send({"Message" : "This is Already Registered Robospark Member."})
     }
+}
+
+module.exports.addComponents = async (req,res)=>{
+    var {name} = req.body;
+    var Component = await inventryComponents.findOne({"NAME":name});
+    if(Component){ 
+        res.send(Component.AVALABILITY);
+    }
+    else{ 
+        console.log("here");
+        res.send({"Error" : "Looks new Component please Provide additional info"});
+    }
+}
+
+module.exports.EntirelyNewComponent = async (req, res)=>{
+    var test = await inventryComponents.findOne({"NAME" : req.body.name});
+    if(!test){
+        var obj = await inventryComponents.create({"NAME":req.body.name,"CATEGORY":req.body.category , "AVALABILITY" : [{
+            "subCategory" : req.body.subCategory,
+            "availability" :  req.body.availability,
+        }]});
+        res.send(obj);
+    }
+    else{
+        res.send({"Error" : "Already Present Components"})
+    }
+}
+
+module.exports.updateExistingComponent = async (req, res)=>{
+    var obj = await inventryComponents.update({"NAME":req.body.name,"AVALABILITY._id":req.body.id},
+    {$inc:{"AVALABILITY.availability": 1}});
+    console.log(obj);
+    
 }

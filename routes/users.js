@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.post('/robosparkUser', robosparkControllers.loginRobosparkUser)
+router.post('/robosparkUser', robosparkControllers.loginRobosparkUser);
 
 module.exports = router;
 

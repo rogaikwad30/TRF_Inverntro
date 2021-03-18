@@ -10,7 +10,7 @@ Model_Value.set( 3 ,elexModel);
 
 module.exports.loginRobosparkUser = async (req,res)=>{
     var domain = parseInt(req.body.username[4]);
-    if(domain>0 && domain<4){
+    if(domain>=1 && domain<=3){
         var UserModel =  Model_Value.get(domain);
         const user = await UserModel.login( req.body.username , req.body.password );
         res.send(user);
