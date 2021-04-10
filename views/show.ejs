@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Components</title>
+  </head>
+  <body>
+    <% list1.forEach(function(req){ %><div>
+   <span><%=req.NAME%></span>
+    <span><%=req.subCategory%></span><span><%=req.quantity%></span>
+  <button id="<%=req._id%>accept" onclick="varifyorder(this)">Accept</button>
+  <button id="<%=req._id%>reject" onclick="varifyorder(this)">Reject</button>
+  </div>
+    <%})%>
+  </body>
+<script src="/javascripts/varifyorder.js"></script>
+</html>

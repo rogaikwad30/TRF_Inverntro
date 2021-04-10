@@ -19,7 +19,7 @@ fetchButton.addEventListener("click", () => {
                 data.forEach(element => {
                     var {availability,_id,subCategory ,lastUpdated} = element;
                     var newDiv = document.createElement("div");
-                    newDiv.innerHTML = subCategory+availability + `<button id='${_id}' onclick="UpdateAvail(this)">`+"+1"+"</button";
+                    newDiv.innerHTML = subCategory+availability + `<button id='${_id}' onclick="UpdateAvail(this)">`+"+1"+"</button>";
                     subCategories.appendChild(newDiv);
                     console.log(newDiv);
                 });
@@ -35,6 +35,7 @@ function UpdateAvail(params) {
     console.log(params.id);
 
     const data = { id:params.id , name : fetchComponent.value };
+
         fetch('http://localhost/updateComponent', {
             method: 'POST',  
             headers: {

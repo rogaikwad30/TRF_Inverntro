@@ -5,6 +5,7 @@ var inventryComponents =  require('../models/components');
 var progModel = require('../models/prog');
 var mecModel = require('../models/mec');
 var elexModel = require('../models/elex');
+var reqModel = require('../models/requests');
 
 var Model_Value = new Map;
 Model_Value.set( 1 ,progModel );
@@ -73,6 +74,17 @@ module.exports.addComponents = async (req,res)=>{
         res.send({"Error" : "Looks new Component please Provide additional info"});
     }
 }
+module.exports.searchcomponents = async (req,res)=>{
+    var {name} = req.body;
+    var Component = await inventryComponents.findOne({"NAME":name});
+    if(Component){ 
+        res.send(Component.AVALABILITY);
+    }
+    else{ 
+        console.log("here");
+        res.send({"Error" : "Looks new Component please Provide additional info"});
+    }
+}
 
 module.exports.EntirelyNewComponent = async (req, res)=>{
     var test = await inventryComponents.findOne({"NAME" : req.body.name});
@@ -92,5 +104,40 @@ module.exports.updateExistingComponent = async (req, res)=>{
     var obj = await inventryComponents.update({"NAME":req.body.name,"AVALABILITY._id":req.body.id},
     {$inc:{"AVALABILITY.availability": 1}});
     console.log(obj);
-    
+}
+
+module.exports.checkorder = async (req, res)=>{
+    var obj = await inventryComponents.find({"NAME":req.body.name , "AVALABILITY._id":req.body.id})
+    var stock = obj[0].AVALABILITY.find(element => element._id==req.body.id);
+    if(stock.availability>=parseInt(req.body.num))
+    {
+       res.json({"msg":"Your order is placed"})
+       var newreq = await reqModel.create({"NAME":req.body.name,"subCategory":stock.subCategory,"quantity":req.body.num,"time":new Date(),"RequestedBy":"Dummy User","status":"open"})
+    }
+    else
+    {
+        res.json({"msg":"Insufficient Stock"})
+    }
+}
+module.exports.varifyorder = async (req, res)=>{
+    var id= req.body.id.slice(0,(req.body.id.length-6))
+    if(req.body.id.includes("accept"))
+    {
+        var order =await reqModel.findOne({_id:id})
+        order.status="accepted"
+        // order.save()
+        // var obj = await inventryComponents.find({"NAME":order.NAME})
+        var obj = await inventryComponents.updateOne({"NAME":order.NAME,"AVALABILITY.subCategory":order.subCategory},
+        {$inc:{"AVALABILITY.availability": 1}});
+        // var stock =  await inventryComponents.find({"NAME":order.NAME}).obj[0].AVALABILITY.find(element => element.subCategory==order.subCategory);
+        console.log(obj)
+        // stock.availability=stock.availability-order.quantity
+        // obj.save()
+    }
+    else if(req.body.id.includes("reject"))
+    {
+        var order =await reqModel.findOne({_id:id})
+        order.status="rejected"
+        order.save()
+    }
 }
